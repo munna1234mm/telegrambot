@@ -20,12 +20,14 @@ import { useParams } from 'next/navigation';
 
 import { PropertiesPanel } from '@/components/builder/PropertiesPanel';
 import { TestPanel } from '@/components/builder/TestPanel';
-import { TriggerNode, ActionNode, ConditionNode } from '@/components/builder/CustomNodes';
+import { TriggerNode, ActionNode, ConditionNode, AgentNode } from '@/components/builder/CustomNodes';
 
 const nodeTypes = {
     trigger: TriggerNode,
     action: ActionNode,
     condition: ConditionNode,
+    agent: AgentNode,
+};
 };
 
 const initialNodes: Node[] = [
@@ -42,6 +44,7 @@ export default function BuilderPage() {
     const [reactFlowInstance, setReactFlowInstance] = useState<any>(null);
     const [selectedNode, setSelectedNode] = useState<Node | null>(null);
     const [showTestPanel, setShowTestPanel] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Mobile sidebar state
 
     // Fetch workflow data on mount
     useEffect(() => {
@@ -90,6 +93,7 @@ export default function BuilderPage() {
 
             setNodes((nds) => nds.concat(newNode));
             setSelectedNode(newNode); // Auto select new node
+            setIsSidebarOpen(false); // Close sidebar on mobile after drop
         },
         [reactFlowInstance, setNodes]
     );
@@ -137,6 +141,9 @@ export default function BuilderPage() {
         <div className="h-screen flex flex-col font-sans">
             <header className="h-16 border-b border-slate-200 bg-white flex items-center justify-between px-6 z-10">
                 <div className="flex items-center gap-4">
+                    <Button variant="ghost" size="sm" className="md:hidden mr-2" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+                        <Command className="w-5 h-5" />
+                    </Button>
                     <Link href="/dashboard" className="text-slate-500 hover:text-slate-800">
                         <ArrowLeft className="w-5 h-5" />
                     </Link>
@@ -156,12 +163,24 @@ export default function BuilderPage() {
                 </div>
             </header>
 
-            <div className="flex-1 flex overflow-hidden">
+            <div className="flex-1 flex overflow-hidden relative">
                 {/* Sidebar */}
-                <div className="w-72 bg-white/50 backdrop-blur-xl border-r border-slate-200 flex flex-col z-20 shadow-sm">
-                    <div className="p-5 border-b border-slate-100">
-                        <h2 className="font-bold text-slate-800 text-sm uppercase tracking-wide">Workflow Components</h2>
-                        <p className="text-xs text-slate-400 mt-1">Drag blocks to the canvas</p>
+                <div
+                    className={`
+                        absolute inset-y-0 left-0 w-72 bg-white/95 backdrop-blur-xl border-r border-slate-200 
+                        flex flex-col z-30 shadow-2xl transform transition-transform duration-300 
+                        md:relative md:translate-x-0 md:shadow-sm
+                        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+                    `}
+                >
+                    <div className="p-5 border-b border-slate-100 flex justify-between items-center">
+                        <div>
+                            <h2 className="font-bold text-slate-800 text-sm uppercase tracking-wide">Components</h2>
+                            <p className="text-xs text-slate-400 mt-1">Drag blocks to canvas</p>
+                        </div>
+                        <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setIsSidebarOpen(false)}>
+                            <ArrowLeft className="w-4 h-4" />
+                        </Button>
                     </div>
 
                     <div className="p-4 space-y-6 overflow-y-auto flex-1">
@@ -190,7 +209,19 @@ export default function BuilderPage() {
                                 <DraggableItem type="action" label="Reply To User" icon={<MessageSquare className="w-3 h-3" />} color="bg-emerald-50 text-emerald-600 border-emerald-100 hover:border-emerald-300" />
                             </div>
                         </div>
+
+                        <div>
+                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">AI Intelligence</div>
+                            <div className="space-y-2">
+                                <DraggableItem type="agent" label="AI Agent" icon={<Bot className="w-3 h-3" />} color="bg-violet-50 text-violet-600 border-violet-100 hover:border-violet-300" />
+                            </div>
+                        </div>
                     </div>
+
+                    {/* Mobile Close Button */}
+                    <button className="md:hidden p-4 text-center text-sm text-slate-500 border-t" onClick={() => document.getElementById('sidebar')?.classList.add('hidden')}>
+                        Close Sidebar
+                    </button>
                 </div>
 
                 {/* Canvas */}

@@ -255,25 +255,64 @@ export function PropertiesPanel({ selectedNode, setNodes, onClose, onDelete }: P
                         />
                     </div>
 
-                    <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">System Message</label>
-                        <textarea
-                            className="w-full border rounded p-2 h-24 text-sm resize-none focus:ring-2 focus:ring-violet-500 outline-none"
-                            value={config.systemMessage || ''}
-                            onChange={(e) => handleChange('systemMessage', e.target.value)}
-                            placeholder="You are a helpful assistant..."
-                        />
+                    <div className="p-3 bg-slate-50 rounded border border-slate-100 space-y-3">
+                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Agent Persona</div>
+
+                        <div className="space-y-1">
+                            <label className="text-xs font-semibold text-slate-500">Name</label>
+                            <input
+                                className="w-full border rounded p-2 text-sm"
+                                value={config.agentName || ''}
+                                onChange={(e) => handleChange('agentName', e.target.value)}
+                                placeholder="SupportBot"
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-xs font-semibold text-slate-500">Role</label>
+                            <input
+                                className="w-full border rounded p-2 text-sm"
+                                value={config.agentRole || ''}
+                                onChange={(e) => handleChange('agentRole', e.target.value)}
+                                placeholder="Customer Support"
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-xs font-semibold text-slate-500">Personality</label>
+                            <input
+                                className="w-full border rounded p-2 text-sm"
+                                value={config.agentPersonality || ''}
+                                onChange={(e) => handleChange('agentPersonality', e.target.value)}
+                                placeholder="Friendly, Professional"
+                            />
+                        </div>
+
+                        <div className="space-y-1">
+                            <label className="text-xs font-semibold text-slate-500">Language</label>
+                            <select
+                                className="w-full border rounded p-2 text-sm"
+                                value={config.agentLanguage || 'English'}
+                                onChange={(e) => handleChange('agentLanguage', e.target.value)}
+                            >
+                                <option value="English">English</option>
+                                <option value="Bengali">Bengali</option>
+                                <option value="Hindi">Hindi</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <div className="space-y-1">
-                        <label className="text-xs font-semibold text-slate-500">User Message</label>
-                        <textarea
-                            className="w-full border rounded p-2 h-20 text-sm resize-none focus:ring-2 focus:ring-violet-500 outline-none"
-                            value={config.userMessage || ''}
-                            onChange={(e) => handleChange('userMessage', e.target.value)}
-                            placeholder="{{last_message}}"
+                    <div className="flex items-center gap-2 pt-2">
+                        <input
+                            type="checkbox"
+                            id="autoReply"
+                            checked={config.autoReply === true}
+                            onChange={(e) => handleChange('autoReply', e.target.checked)}
+                            className="w-4 h-4 text-violet-600 rounded border-slate-300 focus:ring-violet-500"
                         />
-                        <p className="text-[10px] text-slate-400">Use {'{{variable}}'} to inject data.</p>
+                        <label htmlFor="autoReply" className="text-sm font-medium text-slate-700 select-none cursor-pointer">
+                            Auto-Reply to User
+                        </label>
                     </div>
                 </div>
             );

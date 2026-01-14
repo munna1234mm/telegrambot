@@ -187,7 +187,7 @@ export default function BuilderPage() {
                         <div>
                             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Triggers</div>
                             <div className="space-y-2">
-                                <DraggableItem type="trigger" label="New Message" icon={<Zap className="w-3 h-3" />} color="bg-blue-50 text-blue-600 border-blue-100 hover:border-blue-300" />
+                                <DraggableItem type="trigger" label="On Message" icon={<Zap className="w-3 h-3" />} color="bg-blue-50 text-blue-600 border-blue-100 hover:border-blue-300" />
                                 <DraggableItem type="trigger" label="Command" icon={<Command className="w-3 h-3" />} color="bg-blue-50 text-blue-600 border-blue-100 hover:border-blue-300" />
                                 <DraggableItem type="trigger" label="Time / Schedule" icon={<Clock className="w-3 h-3" />} color="bg-blue-50 text-blue-600 border-blue-100 hover:border-blue-300" />
                                 <DraggableItem type="trigger" label="User Actions" icon={<Users className="w-3 h-3" />} color="bg-blue-50 text-blue-600 border-blue-100 hover:border-blue-300" />

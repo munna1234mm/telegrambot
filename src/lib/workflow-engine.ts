@@ -173,7 +173,45 @@ export class WorkflowEngine {
         const config = node.data.config || {};
         this.logSteps.push(`Agent Generating... (${config.provider || 'openai'})`);
 
-        const systemMsg = this.replaceVariables(config.systemMessage || 'You are a helpful assistant.', context);
+        // Construct System Message from Template if structured fields exist
+        let systemMsg = config.systemMessage || 'You are a helpful assistant.';
+
+        if (config.agentRole) {
+            systemMsg = `
+You are an AI-powered Telegram Agent working inside a Telegram Bot system.
+
+Your main job is to:
+- Receive messages sent by Telegram users
+- Understand the user's intent clearly
+- Respond intelligently based on your assigned role
+- Send the response back to the user
+
+========================
+AGENT CONFIGURATION
+========================
+Agent Name: ${config.agentName || 'Bot'}
+Agent Role: ${config.agentRole || 'Assistant'}
+Agent Language: ${config.agentLanguage || 'English'}
+Agent Personality: ${config.agentPersonality || 'Helpful'}
+
+========================
+SYSTEM RULES
+========================
+1. Always respond based on the user's latest message.
+2. Maintain conversation context.
+3. Keep responses clear and helpful.
+4. Do not generate harmful content.
+5. Always respond in ${config.agentLanguage || 'English'}.
+6. Act like a real human agent.
+
+========================
+YOUR TASK
+========================
+Analyze the user message and generate the best request response.
+            `.trim();
+        }
+
+        systemMsg = this.replaceVariables(systemMsg, context);
         const userMsg = this.replaceVariables(config.userMessage || '{{user_text}}', context);
 
         const response = await generateText({
@@ -186,6 +224,12 @@ export class WorkflowEngine {
 
         context.agentResponse = response;
         this.logSteps.push(`Agent Response: ${response.substring(0, 50)}...`);
+
+        // Auto Reply Feature
+        if (config.autoReply) {
+            this.logSteps.push(`Auto-Replying...`);
+            await this.client.sendMessage(context.chatId, response);
+        }
     }
 
     private async executeAction(node: any, context: ExecutionContext) {

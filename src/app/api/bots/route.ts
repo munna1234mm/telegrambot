@@ -42,6 +42,25 @@ export async function POST(req: NextRequest) {
             }
         });
 
+        // Register Webhook
+        try {
+            const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+            const webhookUrl = `${appUrl}/api/telegram/webhook/${newBot.id}`;
+
+            const { TelegramClient } = await import('@/lib/telegram');
+            const client = new TelegramClient(token);
+            await client.setWebhook(webhookUrl);
+
+            // Update bot record with webhook URL
+            await prisma.bot.update({
+                where: { id: newBot.id },
+                data: { webhookUrl }
+            });
+        } catch (webhookError) {
+            console.error('Failed to set webhook:', webhookError);
+            // Don't fail the request, just log it
+        }
+
         return NextResponse.json({ ok: true, bot: newBot });
     } catch (e) {
         console.error(e);

@@ -53,4 +53,9 @@ export class TelegramClient {
             message_id: messageId
         });
     }
+
+    async setWebhook(url: string) {
+        console.log(`[Telegram] Setting webhook to: ${url}`);
+        return this.call('setWebhook', { url });
+    }
 }

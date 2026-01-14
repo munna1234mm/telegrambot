@@ -219,7 +219,7 @@ export default function BuilderPage() {
                     </div>
 
                     {/* Mobile Close Button */}
-                    <button className="md:hidden p-4 text-center text-sm text-slate-500 border-t" onClick={() => document.getElementById('sidebar')?.classList.add('hidden')}>
+                    <button className="md:hidden p-4 text-center text-sm text-slate-500 border-t" onClick={() => setIsSidebarOpen(false)}>
                         Close Sidebar
                     </button>
                 </div>
